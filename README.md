@@ -24,3 +24,11 @@ See the github classroom assignment start instructions for details about how to 
 ################################################
 # assignment-2-DSPEngineer
 ################################################
+
+See the `./full-test.sh` script.  The basis of the automated test implementation for this repository comes from [https://github.com/cu-ecen-aeld/assignment-autotest/](https://github.com/cu-ecen-aeld/assignment-autotest/)
+
+The assignment-autotest directory contains scripts useful for instructor/TA grading and code reviews.  Use
+```
+git submodule init update --recursive
+```
+to synchronize after cloning and before starting each assignment.
