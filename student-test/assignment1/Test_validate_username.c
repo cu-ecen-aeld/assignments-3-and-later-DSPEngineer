@@ -18,6 +18,7 @@ void test_validate_my_username()
      * TODO: Replace the line below with your code here as described above to verify your /conf/username.txt 
      * config file and my_username() functions are setup properly
      */
+
     char *uName = malloc_username_from_conf_file();
     // printf( "My User Name: %s\n", my_username() );
     // printf( "User Name: %s \n", uName );
