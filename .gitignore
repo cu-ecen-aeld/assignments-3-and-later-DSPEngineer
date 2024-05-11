@@ -2,6 +2,7 @@
 *.*~
 **/*.*~
 **/#*#
+**/.vscode
 
 writer
 Test_*_Runner.c
