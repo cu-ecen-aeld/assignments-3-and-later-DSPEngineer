@@ -111,12 +111,12 @@ int writeFile( char* targetFile, char* outputString )
     if( NULL == targetFile )
     {
         syslog( LOG_ERR, "Target file is NULL or missing" );
-        retErr = -1;
+        retErr = 1;
     }
     else if( NULL == outputString )
     {
         syslog( LOG_ERR, "Output string is NULL or missing" );
-        retErr = -2;
+        retErr = 2;
     }
     else
     {
