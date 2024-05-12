@@ -180,12 +180,15 @@ int main( int argc, char **argv)
     {
         retVal = writeFile( argv[1],contentString );
         syslog( LOG_INFO, "result %d: wrote file %s with %ld bytes", retVal, argv[1], strlen(contentString) );
+        if( retVal < 1 )
+            retVal = 1;
+        else
+            retVal = 0;
     }
 
     syslog (LOG_INFO, "Program %s completed for User %d, result=%d", argv[0], getuid (), retVal );
-
     closelog();
 
-    return ( retVal ? 1 : 0 );
+    return retVal;
 }
     
