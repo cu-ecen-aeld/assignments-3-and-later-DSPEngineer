@@ -111,12 +111,12 @@ int writeFile( char* targetFile, char* outputString )
     if( NULL == targetFile )
     {
         syslog( LOG_ERR, "Target file is NULL or missing" );
-        retErr = 1;
+        retErr = -1;
     }
     else if( NULL == outputString )
     {
         syslog( LOG_ERR, "Output string is NULL or missing" );
-        retErr = 1;
+        retErr = -2;
     }
     else
     {
@@ -154,7 +154,7 @@ int main( int argc, char **argv)
     printf( "Executable: %s\n", execName );
 #endif
 
-    char conentString[1024] = {0};
+    char contentString[1024] = {0};
 
     if( argc < 3 )
     {
@@ -163,7 +163,7 @@ int main( int argc, char **argv)
     }
     else if( argc > 3 )
     {
-        int argLen = concatArguments( argc-2, &argv[2], conentString );
+        int argLen = concatArguments( argc-2, &argv[2], contentString );
 #if defined(DEBUG) && ( DEBUG > 0 )
         printf( "INFO: extra command arguments, requres 2, provided %d\n", argc-1 );
         printf( "INFO: concatenated argument(s) length = %d characters.\n", argLen );
@@ -173,18 +173,19 @@ int main( int argc, char **argv)
     }
     else
     {
-        strcpy( conentString, argv[2] );
+        strcpy( contentString, argv[2] );
     }
 
     if( 0 == retVal )
     {
-        retVal= writeFile( argv[1],conentString );
+        retVal = writeFile( argv[1],contentString );
+        syslog( LOG_INFO, "result %d: wrote file %s with %ld bytes", retVal, argv[1], strlen(contentString) );
     }
 
-    syslog (LOG_INFO, "Program %s completed for User %d", argv[0], getuid ());
+    syslog (LOG_INFO, "Program %s completed for User %d, result=%d", argv[0], getuid (), retVal );
 
     closelog();
 
-    return retVal;
+    return ( retVal ? 1 : 0 );
 }
     
