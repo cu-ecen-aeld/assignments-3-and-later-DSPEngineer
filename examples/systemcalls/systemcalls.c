@@ -1,5 +1,12 @@
+/******************************************************************************
+ * 
+ * 
+ ******************************************************************************/
+#include<stdio.h>
+#include<stdlib.h>
 #include "systemcalls.h"
 
+#define DEBUG               0
 /**
  * @param cmd the command to execute with system()
  * @return true if the command in @param cmd was executed
@@ -16,8 +23,11 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
-
-    return true;
+    int rVal = system( cmd );
+#if defined(DEBUG) && DEBUG
+    printf( "CMD: [%s], return=%d\n", cmd, rVal );
+#endif
+    return ( rVal ? false : true );
 }
 
 /**
