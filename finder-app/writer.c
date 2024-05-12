@@ -28,7 +28,7 @@
 #define LOGOPTIONS              LOG_CONS | LOG_PID | LOG_NDELAY
 
 #define MAX_STRING_LENGTH       1024
-#define DEBUG                   1
+#define DEBUG                   0
 
 // Error types:
 typedef enum {
@@ -116,7 +116,7 @@ int writeFile( char* targetFile, char* outputString )
     else if( NULL == outputString )
     {
         syslog( LOG_ERR, "Output string is NULL or missing" );
-        retErr = 2;
+        retErr = 1;
     }
     else
     {
@@ -126,14 +126,13 @@ int writeFile( char* targetFile, char* outputString )
         close(fp);
     }
 
-
     return retErr;
 }
 
 
 int main( int argc, char **argv)
 {
-    int retVal = 1;
+    int retVal = 0;
     // capture the file name:
     char *execName=argv[0];
 
@@ -144,8 +143,7 @@ int main( int argc, char **argv)
     // First log message, when program starts
     syslog( LOG_INFO, "Program %s started by User %d", argv[0], getuid ());
 
-
-#if 1 || defined(DEBUG) && ( DEBUG > 0 )
+#if defined(DEBUG) && ( DEBUG > 0 )
     printf( "Arg[0]: %s\n", execName );
     printf( "Arg[1]: %s\n", argv[1] );
 #endif
@@ -161,7 +159,7 @@ int main( int argc, char **argv)
     if( argc < 3 )
     {
         syslog( LOG_ERR, "missing command arguments, requres 2, provided %d\n", argc-1 );
-        usage( execName );
+        retVal = usage( execName );
     }
     else if( argc > 3 )
     {
@@ -173,8 +171,15 @@ int main( int argc, char **argv)
         syslog( LOG_INFO, "INFO: extra command arguments, requres 2, provided %d\n", argc-1 );
         syslog( LOG_INFO, "concatenated argument(s) length = %d characters.\n", argLen );
     }
+    else
+    {
+        strcpy( conentString, argv[2] );
+    }
 
-    retVal= writeFile( argv[1],conentString );
+    if( 0 == retVal )
+    {
+        retVal= writeFile( argv[1],conentString );
+    }
 
     syslog (LOG_INFO, "Program %s completed for User %d", argv[0], getuid ());
 
