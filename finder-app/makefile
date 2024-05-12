@@ -1,8 +1,12 @@
-CC=gcc
-CFLAGS=-I.
+SRC := writer.c
+TARGET = writer
+OBJS := $(SRC:.c=.o)
+CC = $(CROSS_COMPILE)gcc
 
-default:
-	$(CC) writer.c  -o writer
+all: $(TARGET)
 
-clean: *.o
-	rm *.o
+$(TARGET) : $(OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) -o $(TARGET) $(LDFLAGS)
+
+clean:
+	-rm -f *.o $(TARGET) *.elf *.map
