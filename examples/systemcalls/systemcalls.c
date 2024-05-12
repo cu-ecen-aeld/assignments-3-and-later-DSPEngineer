@@ -27,9 +27,9 @@ bool do_system(const char *cmd)
     */
     int rVal = system( cmd );
 
-#if defined(DEBUG) && DEBUG
-    printf( "CMD: [%s], return=%d\n", cmd, rVal );
-#endif
+    #if defined(DEBUG) && DEBUG
+        printf( "CMD: [%s], return=%d\n", cmd, rVal );
+    #endif
 
     return ( rVal ? false : true );
 }
