@@ -76,12 +76,19 @@ bool do_exec(int count, ...)
     *
     */
     #if defined(DEBUG) && DEBUG
+        printf( "%s (%d): %s()\n", __FILE__, __LINE__, __FUNCTION__ );
         printf( "CMD count=%d\n", count );
 
         for(int i=0; i<count; i++)
             printf( " CMD[%d]: [%s]\n", i, command[i] );
 
     #endif
+
+    if( '/' != command[0][0] )
+    {
+      //printf( " *** CMD[%d]: [%s] - does not contain absolute path\n", 0, command[0] );
+        return false;
+    }
 
     int pid = fork();
 
@@ -93,15 +100,24 @@ bool do_exec(int count, ...)
     { // Inside the child process
         #if defined(DEBUG) && DEBUG
             printf( "Inside child process: %d\n", getpid() );
-            printf( "--> execv( %s, %s )\n", command[0], command[1] );
+            printf( "-0-> execv( %s, %s )\n", command[0], command[1] );
         #endif
 
-        int execErr = execv( command[0], command );
+
+	int execErr = execv( command[0], command );
         #if defined(DEBUG) && DEBUG
-                printf( "FAIL 0: Return not expected. Must be an execv error: %d\n", execErr );
+	    printf( "FAIL 0 (%d): Return not expected. Must be an execv error: %d\n", __LINE__, execErr );
+            printf( "-1-> execv( %s, %s) Return: %d\n", command[0], command[1], execErr );
         #else
-            execErr = execErr;
+	    //            execErr = execErr;
         #endif
+
+        if( 0 != execErr )
+        {
+            printf( "-2-> execv( %s, %s) Return: %d\n", command[0], command[1], execErr );
+	    return false;
+	}
+
     }
     else
     { // Inside the parent process
@@ -142,8 +158,9 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     va_list args;
     va_start(args, count);
     char * command[count+1];
-    int i;
-    for(i=0; i<count; i++)
+    //    int i;
+
+    for( int i=0; i<count; i++)
     {
         command[i] = va_arg(args, char *);
     }
@@ -161,6 +178,7 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     *
     */
     #if defined(DEBUG) && DEBUG
+        printf( "%s (%d): %s()\n", __FILE__, __LINE__, __FUNCTION__ );
         printf( "CMD count=%d, outputfile=%s\n", count, outputfile );
 
         for(int i=0; i<count; i++)
@@ -168,16 +186,27 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 
     #endif
 
+    if( '/' != command[0][0] )
+    {
+        printf( " **** CMD[%d]: [%s] - does not contain absolute path\n", 0, command[0] );
+        return false;
+    }
+	
     int pid = fork();
 
-    if( -1 == pid )
+    if( 0 > pid )
     { // call to fork() failed
         return false;
     }
     else if( 0 == pid )
     { // Inside the child process
 
-        int fd = open( outputfile, O_WRONLY|O_TRUNC|O_CREAT, 0644);
+        #if defined(DEBUG) && DEBUG
+            printf( "Inside child process: %d\n", getpid() );
+            printf( "--> execv( %s, %s )\n", command[0], command[1] );
+        #endif
+
+	int fd = open( outputfile, O_WRONLY|O_TRUNC|O_CREAT, 0644);
 
         if (fd < 0)
         { 
@@ -192,20 +221,16 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 
         close(fd);
 
-        #if defined(DEBUG) && DEBUG
-            printf( "Inside child process: %d\n", getpid() );
-            printf( "--> execv( %s, %s )\n", command[0], command[1] );
-        #endif
-
         int execErr = execv( command[0], command );
         #if defined(DEBUG) && DEBUG
             printf( "Return not expected. Must be an execv error: %d\n", execErr );
         #else
-            execErr = execErr;
+	    //            execErr = execErr;
             printf( "FAIL 1: Return not expected. Must be an execv error: %d\n", execErr );
         #endif
 
-        return false;
+        return ( 0 == execErr ) ? true : false;
+
     }
     else
     { // Inside the parent process
