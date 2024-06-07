@@ -2,6 +2,12 @@
 # Script outline to install and build kernel.
 # Author: Siddhant Jajoo.
 # Updated by: Jose Pagan, 06 June 2024, 12 May 2024
+#
+# Code adapted from: https://github.com/cu-ecen-aeld/assignments-3-and-later-sergeynv-coursera/tree/main/finder-app
+# This solves the multiple definition problem, when building the kernel;
+#    (.text+0x0): multiple definition of `yylloc'; dtc-lexer.lex.o (symbol from plugin):(.text+0x0): first defined here ...
+# using the path file: scripts-dtc-Remove-redundant-YYLOC-global-declaratio.patch
+####
 
 set -e
 set -u
@@ -18,7 +24,7 @@ MY_CURRENT_DIR=`pwd`
 # Install required lunux packages for building
   REQUIRED_PACKAGES="git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison tree"
   echo "--> Installing build packages: ${REQUIRED_PACKAGES}"
-  sudo apt-get install $REQUIRED_PACKAGES
+  sudo apt-get install -y $REQUIRED_PACKAGES
 
 make-exec() {
     make ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} "$@"
