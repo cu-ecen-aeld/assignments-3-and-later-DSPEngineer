@@ -86,27 +86,27 @@ bool do_exec(int count, ...)
 
     if( '/' != command[0][0] )
     {
-      //printf( " *** CMD[%d]: [%s] - does not contain absolute path\n", 0, command[0] );
+        printf( " *** CMD[%d]: [%s] - does not contain absolute path\n", 0, command[0] );
         return false;
     }
 
     int pid = fork();
 
     if( -1 == pid )
-    { // call to fork() failed
+    { // -1 indicates the call to fork() failed
         return false;
     }
     else if( 0 == pid )
-    { // Inside the child process
+    { // if we have a zero PID, we are inside the chils process
         #if defined(DEBUG) && DEBUG
             printf( "Inside child process: %d\n", getpid() );
             printf( "-0-> execv( %s, %s )\n", command[0], command[1] );
         #endif
 
 
-	int execErr = execv( command[0], command );
+	    int execErr = execv( command[0], command );
         #if defined(DEBUG) && DEBUG
-	    printf( "FAIL 0 (%d): Return not expected. Must be an execv error: %d\n", __LINE__, execErr );
+	        printf( "FAIL 0 (%d): Return not expected. Must be an execv error: %d\n", __LINE__, execErr );
             printf( "-1-> execv( %s, %s) Return: %d\n", command[0], command[1], execErr );
         #else
 	    //            execErr = execErr;
@@ -115,16 +115,18 @@ bool do_exec(int count, ...)
         if( 0 != execErr )
         {
             printf( "-2-> execv( %s, %s) Return: %d\n", command[0], command[1], execErr );
-	    return false;
-	}
+	        return false;
+    	}
 
     }
     else
-    { // Inside the parent process
+    { // if we have a non-zero PID, we are inside the parent process
         int stat;
+
         #if defined(DEBUG) && DEBUG
             printf( "Inside parent process: %d, with child: %d\n", getpid(), pid );
         #endif
+
         wait( &stat );
         if( WIFEXITED( stat ) )
         {
