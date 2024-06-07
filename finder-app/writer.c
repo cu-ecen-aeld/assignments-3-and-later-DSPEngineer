@@ -180,10 +180,8 @@ int main( int argc, char **argv)
     {
         retVal = writeFile( argv[1],contentString );
         syslog( LOG_INFO, "result %d: wrote file %s with %ld bytes", retVal, argv[1], strlen(contentString) );
-        if( retVal < 1 )
+        if( retVal < 0 )
             retVal = 1;
-        else
-            retVal = 0;
     }
 
     syslog (LOG_INFO, "Program %s completed for User %d, result=%d", argv[0], getuid (), retVal );
@@ -191,4 +189,3 @@ int main( int argc, char **argv)
 
     return retVal;
 }
-    
